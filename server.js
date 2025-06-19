@@ -16,18 +16,17 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
 // Пример простого маршрута для проверки работы сервера
 app.get('/', (req, res) => {
   res.send('Сервер работает!');
 });
 // Настройка подключения к PostgreSQL
 const pool = new Pool({
-  user: 'tuvanornru',
-  host: '127.0.0.1:5433',
-  database: 'tuvanornru',
-  password: 'Polo12345',
-  port: 5433,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'tuvan_fam',
+  password: '12345',
+  port: 5432,
 });
 
 // Получение всех фамилий
@@ -116,6 +115,7 @@ app.put('/api/surnames/:id', async (req, res) => {
 });
 
 // Запуск сервера
-app.listen(PORT, '127.0.0.1:5433', () => {
-  console.log(`Сервер запущен на http://0.0.0.0:${PORT}`);
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

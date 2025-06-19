@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Отправляем POST-запрос
-    fetch('/api/surnames', {
+    fetch('http://212.113.122.123:3000/api/surnames', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
