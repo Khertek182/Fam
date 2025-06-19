@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тувинские фамилии</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+
+    .filter-bar {
+      position: static;
+      top: 60px; /* ниже шапки */
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      background: rgba(0, 0, 0, 0);
+      padding: 1rem 1rem 0.5rem;
+    }
+    /*стиль поисковика*/
+    .search-container {
+      display: flex;
+      align-items: center;
+      max-width: 400px;
+      margin: 1rem auto 1rem; /* по центру с отступами сверху и снизу */
+      background: rgba(255, 255, 255, 0.15); /* полупрозрачный белый фон */
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      border-radius: 8px;
+      padding: 0.25rem 0.5rem;
+      backdrop-filter: blur(6px); /* размытие фона за элементом */
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    }
+
+    #searchInput {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      color: #fff;
+      font-weight: 500;
+      /* placeholder светлый */
+    }
+
+    #searchInput::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    #searchBtn {
+      background: #146388;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-left: 0.5rem;
+      user-select: none;
+    }
+
+    #searchBtn:hover {
+      background: #146388;
+    }
+
+    /*стиль поиска по буквам*/
+   #letterFilter {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 10px;
+    }
+
+    #letterFilter button {
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      padding: 0.25rem 0.5rem;
+      background: #b37d0a;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+    }
+
+    #letterFilter button:hover,
+    #letterFilter button.active {
+      background: #1e81b0;
+      color: #fff;
+    }
+
+    /*стиль таблицы*/
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(0, 0, 0, 0.5); /* полупрозрачный тёмный фон */
+      color: #000; /* чёткий чёрный текст */
+      font-size: 1.1rem; /* чуть больше размер текста */
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      margin-top: 20px;
+    }
+
+    thead {
+      background: rgba(30, 30, 30, 0.7); /* тёмный полупрозрачный фон шапки */
+      color: #fff; /* светлый текст для контраста */
+      font-weight: 700;
+    }
+
+    thead th {
+      padding: 12px 15px;
+      text-align: left;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.15); /* лёгкий светлый фон при наведении */
+    }
+
+    tbody td:nth-child(2),
+    tbody td:nth-child(3),
+    tbody td:nth-child(4) {
+      color: #fff;  /* белый цвет текста по умолчанию */
+      font-weight: 600;
+    }
+
+    tbody td {
+      padding: 12px 15px;
+      color: #000; /* чёткий чёрный текст */
+    }
+
+    tbody td:first-child {
+      text-align: center;
+      font-weight: 700;
+      color: #1e81b0;
+    }
+
+    /*стиль пагинации*/
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination button {
+      background: #1e81b0;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    .pagination button.active,
+    .pagination button:hover {
+      background: #72c3dc;
+      color: #000;
+    }
+ 
+    /*модальное окно*/
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* затемнение фона */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  display: none; /* скрыто по умолчанию */
+}
+
+.modal.show {
+  display: flex; /* показываем при добавлении класса .show */
+}
+
+.modal-content {
+  background-color: #222;
+  padding: 1.5rem 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  transform: translateY(-10px);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: translateY(0);
+}
+
+.modalclose {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #791c1c;
+  background: none;
+  border: none;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+  color: #ff5c5c;
+}
+
+ footer {
+      text-align: center;
+      padding: 0.2rem 0;
+      font-size: 0.75rem;
+      color: #bbb;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+    }
+
+    .burger {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 1rem 0;
+      }
+
+      nav ul.show {
+        display: flex;
+      }
+
+      nav ul li {
+        text-align: center;
+        padding: 0.5rem 0;
+      }
+
+      .burger {
+        display: block;
+      }
+    }
+
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+      <img src="ml.png" alt="Логотип">
+      <span>Тувинские фамилии</span>
+    </div>
+    <div class="burger" id="burger"><i class="fas fa-bars"></i></div>
+    <ul id="nav-links">
+      <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+      <li><a href="dictionary.html"><i class="fas fa-book"></i> Словарь</a></li>
+      <li><a href="sources.html"><i class="fas fa-scroll"></i> Источники</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Авторизация</a></li>
+    </ul>
+  </nav>
+
+<div class="filter-bar">
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Поиск фамилии..." />
+    <button id="searchBtn">Найти</button>
+  </div>
+
+    <div id="letterFilter" class="letter-filter">
+      <button data-letter="all" class="active">Все</button>
+      <!-- Кнопки с буквами: -->
+      <button data-letter="А">А</button>
+      <button data-letter="Б">Б</button>
+      <button data-letter="В">В</button>
+      <button data-letter="Г">Г</button>
+      <button data-letter="Д">Д</button>
+      <button data-letter="Е">Е</button>
+      <button data-letter="Ё">Ё</button>
+      <button data-letter="Ж">Ж</button>
+      <button data-letter="З">З</button>
+      <button data-letter="И">И</button>
+      <button data-letter="Й">Й</button>
+      <button data-letter="К">К</button>
+      <button data-letter="Л">Л</button>
+      <button data-letter="М">М</button>
+      <button data-letter="Н">Н</button>
+      <button data-letter="Ң">Ң</button>
+      <button data-letter="О">О</button>
+      <button data-letter="Ө">Ө</button>
+      <button data-letter="П">П</button>
+      <button data-letter="Р">Р</button>
+      <button data-letter="С">С</button>
+      <button data-letter="Т">Т</button>
+      <button data-letter="У">У</button>
+      <button data-letter="Ү">Ү</button>
+      <button data-letter="Ф">Ф</button>
+      <button data-letter="Х">Х</button>
+      <button data-letter="Ц">Ц</button>
+      <button data-letter="Ч">Ч</button>
+      <button data-letter="Ш">Ш</button>
+      <button data-letter="Щ">Щ</button>
+      <button data-letter="Ъ">Ъ</button>
+      <button data-letter="Ы">Ы</button>
+      <button data-letter="Ь">Ь</button>
+      <button data-letter="Э">Э</button>
+      <button data-letter="Ю">Ю</button>
+      <button data-letter="Я">Я</button>
+    </div>
+</div>
+
+  <div class="table-container">
+        <table id="surnamesTable" border="1">
+        <thead>
+            <tr>
+            <th>№</th>
+            <th>Фамилия</th>
+            <th>Значение на тувинском языке</th>
+            <th>Значение на русском языке</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Здесь будут данные из базы -->
+        </tbody>
+        </table>
+   </div>
+   
+<div id="modal" style="display:none; /* и остальные стили */">
+  <div id="modalContent">
+    <button id="modalClose">×</button>
+    <h2 id="modalSurname"></h2>
+    <div id="modalDetails"></div>
+  </div>
+</div>
+
+
+   <div class="pagination">
+    <!-- Кнопки пагинации здесь -->
+  </div>
+
+  
+
+  <footer>
+    © 2025 Электронный словарь тувинских фамилий.<br>
+    Автор: Хертек Инна Юрьевна. Руководитель: Ондар Севил Кечил-ооловна.
+  </footer>
+
+  <script>
+    const burger = document.getElementById('burger');
+    const navLinks = document.getElementById('nav-links');
+
+    burger.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+
+
+  fetch('/api/surnames')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#surnamesTable tbody');
+          data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${item.surname}</td>
+              <td>${item.meaning_tuvan || ''}</td>
+              <td>${item.meaning_russian || ''}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error('Ошибка загрузки данных:', err);
+        });
+</script>
+<script src="dictionary.js" defer></script>
+</body>
+</html>
