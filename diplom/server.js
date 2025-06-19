@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Отдача статических файлов из папки public
-app.use(express.static('public'));
+
 
 // Пример простого маршрута для проверки работы сервера
 app.get('/', (req, res) => {
