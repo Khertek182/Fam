@@ -10,13 +10,12 @@ const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
-const path = require('path');
+
 
 // Отдаём файлы из папки public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Отдача статических файлов из папки public
-app.use(express.static('public'));
+
 
 // Пример простого маршрута для проверки работы сервера
 app.get('/', (req, res) => {
