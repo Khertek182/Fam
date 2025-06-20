@@ -22,10 +22,10 @@ app.get('/', (req, res) => {
 });
 // Настройка подключения к PostgreSQL
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
+  user: 'user',
+  host: 'dpg-d19pmqh5pdvs73a1qrbg-a',
   database: 'tuvan_fam',
-  password: '12345',
+  password: '55wH6LHst934G9hl0MEbW9oxMYXBhaBT',
   port: 5432,
 });
 
